@@ -27,7 +27,7 @@ import java.util.Date;
     数据、有关对象的类型的信息和存储在对象中数据的类型。将序列化对象写入文件之后，可以从文件中读取出来，并
     且对它进行反序列化
 * */
-public class TaskInfoEntity implements Serializable {
+public class TaskInfo implements Serializable {
     private static final long serialVersionUID = 7239712854365348931L;
     @TableId(type = IdType.ASSIGN_ID) // 配置映射关系 id专属 自动生成id
     private Long taskId;
