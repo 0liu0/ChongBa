@@ -2,7 +2,7 @@ package com.liuche.shedule;
 
 import com.liuche.schedule.ScheduleApplication;
 import com.liuche.schedule.mapper.TaskInfoMapper;
-import com.liuche.schedule.pojo.TaskInfoEntity;
+import com.liuche.schedule.entity.TaskInfoEntity;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;

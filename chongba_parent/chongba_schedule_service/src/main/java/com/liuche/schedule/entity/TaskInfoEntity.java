@@ -1,4 +1,4 @@
-package com.liuche.schedule.pojo;
+package com.liuche.schedule.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
