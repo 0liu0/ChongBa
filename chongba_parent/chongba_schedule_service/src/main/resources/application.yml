@@ -1,0 +1,9 @@
+spring:
+  application:
+    name: schedule-service
+  # 连接mysql
+  datasource:
+    url: jdbc:mysql://106.14.62.220:3306/chongba
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: liuche
