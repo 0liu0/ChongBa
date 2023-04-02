@@ -16,6 +16,6 @@ public class RedisTest {
     private CacheService cacheService;
     @Test
     public void test01() {
-        cacheService.set("myName","liuche");
+        cacheService.set("myName","LiuChe");
     }
 }

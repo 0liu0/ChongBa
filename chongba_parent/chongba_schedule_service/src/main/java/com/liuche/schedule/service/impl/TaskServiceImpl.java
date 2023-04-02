@@ -1,9 +1,11 @@
 package com.liuche.schedule.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.liuche.common.entity.Constants;
 import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
 import com.liuche.common.exception.TaskNotExistException;
+import com.liuche.common.utils.CacheService;
 import com.liuche.schedule.entity.TaskInfo;
 import com.liuche.schedule.entity.TaskInfoLogs;
 import com.liuche.schedule.mapper.TaskInfoLogsMapper;
@@ -13,6 +15,7 @@ import com.liuche.schedule.utils.CopyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 
@@ -23,12 +26,29 @@ public class TaskServiceImpl implements TaskService {
     private TaskInfoMapper taskInfoMapper;
     @Autowired
     private TaskInfoLogsMapper taskInfoLogsMapper;
+
+    @Autowired
+    private CacheService cacheService;
+
     @Override
+    @Transactional // 添加事务
     public long addTask(Task task) throws ScheduleSystemException {
         /*
             向任务表中添加数据
             向任务日志表中添加数据
+            将延时任务写入缓存
         * */
+        boolean flag = saveTaskInDB(task);
+        if (flag) {
+            saveTaskInCache(task);
+        }
+        return task.getTaskId();
+    }
+
+    private void saveTaskInCache(Task task) {
+        cacheService.zAdd(Constants.DBCACHE, JSON.toJSONString(task),task.getExecuteTime());
+    }
+    public boolean saveTaskInDB(Task task) {
         try {
             // 未执行任务入库
             TaskInfo taskInfo = CopyUtil.copy(task, TaskInfo.class);
@@ -37,7 +57,6 @@ public class TaskServiceImpl implements TaskService {
 
             // 设置主键id
             task.setTaskId(taskInfo.getTaskId());
-
             // 记录任务日志
             TaskInfoLogs infoLogs = CopyUtil.copy(task, TaskInfoLogs.class);
             infoLogs.setExecuteTime(new Date(task.getExecuteTime()));
@@ -46,10 +65,10 @@ public class TaskServiceImpl implements TaskService {
             taskInfoLogsMapper.insert(infoLogs);
         } catch (Exception e) {
             // 日志记录
-            log.warn("add task exception taskid={}",task.getTaskId());
+            log.warn("add task exception taskid={}", task.getTaskId());
             throw new ScheduleSystemException(e.getMessage());
         }
-        return task.getTaskId();
+        return true;
     }
 
     @Override
@@ -64,7 +83,7 @@ public class TaskServiceImpl implements TaskService {
             taskLog.setStatus(Constants.CANCELLED);
             taskInfoLogsMapper.updateById(taskLog);
         } catch (Exception e) {
-            log.warn("task cancel exception taskid={}",taskId);
+            log.warn("task cancel exception taskid={}", taskId);
             throw new TaskNotExistException(e);
         }
         return true;

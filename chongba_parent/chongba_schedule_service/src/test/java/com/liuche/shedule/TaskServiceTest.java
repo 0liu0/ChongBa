@@ -33,4 +33,9 @@ public class TaskServiceTest {
         //取消任务
         taskService.cancelTask(1642151312218935298L);
     }
+    @Test
+    public void test03() {
+        long time = new Date().getTime();
+        System.out.println(time);
+    }
 }

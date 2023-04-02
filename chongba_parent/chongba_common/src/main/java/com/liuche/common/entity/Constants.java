@@ -5,5 +5,7 @@ public class Constants {
     public static final int SCHEDULED=0; //初始化状态
     public static final int EXECUTED=1; //已执行状态
     public static final int CANCELLED=2; //已取消状态
+    public static String DBCACHE="db_cache"; // redis缓存的key名
+
 
 }
