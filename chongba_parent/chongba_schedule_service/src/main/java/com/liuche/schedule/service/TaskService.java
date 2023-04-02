@@ -22,8 +22,8 @@ public interface TaskService {
      * @throws TaskNotExistException
      */
     public boolean cancelTask(long taskId) throws TaskNotExistException;
-    long size();
+    long size(int type,int priority);
 
-    Task poll()throws TaskNotExistException;
+    Task poll(int type,int priority)throws TaskNotExistException;
 
 }

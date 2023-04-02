@@ -17,6 +17,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
 import java.util.Date;
@@ -157,32 +158,47 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public long size() { // 返回当前缓存中的任务的数量
-        Set<String> strings = cacheService.zRangeAll(Constants.DBCACHE);
-        return strings.size();
+    public long size(int type, int priority) { // 返回当前缓存中的任务的数量
+        String key = type + "_" + priority;
+        Long len = cacheService.lLen(Constants.TOPIC + key);
+        int size = cacheService.zRangeAll(Constants.FUTURE + key).size();
+        return len + size;
     }
 
     @Override
     @Transactional
-    public Task poll() throws TaskNotExistException { // 拉取当前最近的任务
-        Task task;
+    public Task poll(int type, int priority) throws TaskNotExistException { // 拉取当前最近的任务
+        Task task = null;
         try {
-            // 得到时间点到现在的所有任务
-            Set<String> tasks = cacheService.zRange(Constants.DBCACHE, 0, System.currentTimeMillis());
-            // 返回最近的任务
-            if (tasks == null || tasks.isEmpty()) return null; // 还没有任务task来返回,则返回null
-            String value = tasks.iterator().next(); // 用迭代器得到最近的一个任务，因为zSet已经做了排序
-            // 转换成对象
-            task = JSON.parseObject(value, Task.class);
-            if (task.getExecuteTime() > System.currentTimeMillis()) return null;
-            // 从缓存中删除该任务
-            cacheService.zRemove(Constants.DBCACHE, value);
-            // 更新数据库的信息
-            updateDB(task.getTaskId(), Constants.EXECUTED);
+            // 从list得到当前可执行的定时任务
+            String key = Constants.TOPIC + type + "_" + priority;
+            String str = cacheService.lRightPop(key);
+            if (StringUtils.hasLength(str)){
+                task = JSON.parseObject(str, Task.class);
+                // 更新数据库信息
+                updateDB(task.getTaskId(), Constants.EXECUTED);
+            }
         } catch (Exception e) {
             log.warn("poll task exception");
             throw new TaskNotExistException(e);
         }
+//        try {
+//            // 得到时间点到现在的所有任务
+//            Set<String> tasks = cacheService.zRange(Constants.DBCACHE, 0, System.currentTimeMillis());
+//            // 返回最近的任务
+//            if (tasks == null || tasks.isEmpty()) return null; // 还没有任务task来返回,则返回null
+//            String value = tasks.iterator().next(); // 用迭代器得到最近的一个任务，因为zSet已经做了排序
+//            // 转换成对象
+//            task = JSON.parseObject(value, Task.class);
+//            if (task.getExecuteTime() > System.currentTimeMillis()) return null;
+//            // 从缓存中删除该任务
+//            cacheService.zRemove(Constants.DBCACHE, value);
+//            // 更新数据库的信息
+//            updateDB(task.getTaskId(), Constants.EXECUTED);
+//        } catch (Exception e) {
+//            log.warn("poll task exception");
+//            throw new TaskNotExistException(e);
+//        }
 
         // 返回任务
         return task;

@@ -53,9 +53,9 @@ public class TaskServiceTest {
             taskService.addTask(task);
         }
         // 拉取任务
-        while (taskService.size() > 0) {
+        while (taskService.size(250,250) > 0) {
             // 得到一个任务
-            Task task = taskService.poll();
+            Task task = taskService.poll(250,250);
             // 如果任务为不为null
             if (task != null) {
                 System.out.println("成功消费了任务：" + task.getTaskId());
