@@ -1,7 +1,6 @@
 package com.liuche.schedule.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.liuche.common.entity.Constants;
 import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
@@ -14,12 +13,15 @@ import com.liuche.schedule.mapper.TaskInfoMapper;
 import com.liuche.schedule.service.TaskService;
 import com.liuche.schedule.utils.CopyUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Service
@@ -32,6 +34,29 @@ public class TaskServiceImpl implements TaskService {
 
     @Autowired
     private CacheService cacheService;
+
+    @PostConstruct
+    private void syncData(){
+        System.out.println("init ..............");
+        // 清除缓存中原有的数据
+        clearCache();
+        //从数据库查询所有任务数据
+        List<TaskInfo> allTaskInfo = taskInfoMapper.selectList(null);
+        //将任务数据存入缓存
+        for (TaskInfo taskInfoEntity : allTaskInfo) {
+            Task task = new Task();
+            //属性拷贝
+            BeanUtils.copyProperties(taskInfoEntity,task);
+            task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
+            //放入缓存
+            saveTaskInCache(task);
+        }
+    }
+    private void clearCache() {
+//移除所有的数据
+        cacheService.delete(Constants.DBCACHE);
+    }
+
 
     @Override
     @Transactional // 添加事务

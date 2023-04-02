@@ -48,7 +48,7 @@ public class TaskServiceTest {
             Task task = new Task();
             task.setTaskType(250);
             task.setPriority(250);
-            task.setExecuteTime(now + 50000 * i);
+            task.setExecuteTime(now + 5000 * i);
             task.setParameters("testPoolTask".getBytes());
             taskService.addTask(task);
         }
@@ -67,6 +67,18 @@ public class TaskServiceTest {
                 throw new RuntimeException(e);
             }
         }
-
     }
+
+    @Test
+    public void testSyncDate() {
+        for (int i = 1; i <= 3; i++) {
+            Task task = new Task();
+            task.setTaskType(250);
+            task.setPriority(250);
+            task.setExecuteTime(new Date().getTime() + 10000 * i);
+            task.setParameters("testPoolTask".getBytes());
+            taskService.addTask(task);
+        }
+    }
+
 }
