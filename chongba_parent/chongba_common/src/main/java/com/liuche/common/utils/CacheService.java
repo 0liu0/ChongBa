@@ -1392,18 +1392,18 @@ public class CacheService extends CachingConfigurerSupport {
         return results;
     }
 
-   /* public List<Object> refreshWithPipeline(String future_key,String topic_key, Collection<String> values){
-        List<Object> results =  stringRedisTemplate.executePipelined(new RedisCallback<Object>() {
+    public List<Object> refreshWithPipeline(String futureKey, String topicKey, Collection<String> values) {
+        List<Object> results = stringRedisTemplate.executePipelined(new RedisCallback<Object>() {
             @Override
             public Object doInRedis(RedisConnection connection) throws DataAccessException {
-                StringRedisConnection stringRedisConn = (StringRedisConnection)connection;
-                String[] strvalues= values.toArray(new String[values.size()]);
-                stringRedisConn.lPush(topic_key,strvalues);
-                stringRedisConn.zRem(future_key,strvalues);
+                StringRedisConnection stringRedisConn = (StringRedisConnection) connection;
+                String[] strValues = values.toArray(new String[values.size()]);
+                stringRedisConn.lPush(topicKey, strValues);
+                stringRedisConn.zRem(futureKey, strValues);
                 return null;
             }
         });
         return results;
-    }*/
+    }
 
 }

@@ -26,10 +26,11 @@ public class Refresh {
             String topicKey =Constants.TOPIC+key.split(Constants.FUTURE)[1];
             // 3.push到指定的list集合中
             if (!tasks.isEmpty()) {
-                for (String task : tasks) {
-                    cacheService.lLeftPush(topicKey,task);
-                    cacheService.zRemove(key,task);
-                }
+//                for (String task : tasks) {
+//                    cacheService.lLeftPush(topicKey,task);
+//                    cacheService.zRemove(key,task);
+//                }
+                cacheService.refreshWithPipeline(key,topicKey,tasks);
                 System.out.println("成功的将"+key+"定时刷新到"+topicKey);
             }
         }
