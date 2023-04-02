@@ -54,8 +54,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void clearCache() {
-//移除所有的数据
-        cacheService.delete(Constants.DBCACHE);
+        //移除所有的数据 包括未来数据集合和消费者队列，移除所有的key即可
+        //cacheService.delete(Constants.DBCACHE);
+        // 获取未来数据集合所有的key
+        Set<String> futureKeys = cacheService.scan(Constants.FUTURE + "*");// future_*
+        cacheService.delete(futureKeys);
+        //获取消费者队列所有的key
+        Set<String> topicKeys = cacheService.scan(Constants.TOPIC + "*");// topic_*
+        cacheService.delete(topicKeys);
     }
 
 
