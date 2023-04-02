@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -36,7 +35,7 @@ public class TaskServiceImpl implements TaskService {
     private CacheService cacheService;
 
     @PostConstruct
-    private void syncData(){
+    private void syncData() {
         System.out.println("init ..............");
         // 清除缓存中原有的数据
         clearCache();
@@ -46,12 +45,13 @@ public class TaskServiceImpl implements TaskService {
         for (TaskInfo taskInfoEntity : allTaskInfo) {
             Task task = new Task();
             //属性拷贝
-            BeanUtils.copyProperties(taskInfoEntity,task);
+            BeanUtils.copyProperties(taskInfoEntity, task);
             task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
             //放入缓存
             saveTaskInCache(task);
         }
     }
+
     private void clearCache() {
 //移除所有的数据
         cacheService.delete(Constants.DBCACHE);
@@ -74,7 +74,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void saveTaskInCache(Task task) {
-        cacheService.zAdd(Constants.DBCACHE, JSON.toJSONString(task), task.getExecuteTime());
+        // 使用任务类型和优先级作为key
+        String key = task.getTaskType() + "_" + task.getPriority();
+        if (task.getExecuteTime() <= System.currentTimeMillis()) {
+            // 当前任务在当前状态就需执行，存到redis中list集合中，减少时间复杂度
+            // 存放到list集合中
+            cacheService.lLeftPush(Constants.TOPIC + key, JSON.toJSONString(task));
+        } else {
+            // 未来需要执行的任务，存放到ZSet集合里面去
+            cacheService.zAdd(Constants.FUTURE + key, JSON.toJSONString(task), task.getExecuteTime());
+        }
+
     }
 
     public boolean saveTaskInDB(Task task) {
@@ -136,7 +146,14 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void removeTaskFromCache(Task task) {
-        cacheService.zRemove(Constants.DBCACHE, JSON.toJSONString(task));
+        // 使用任务类型和优先级作为key
+        String key = task.getTaskType() + "_" + task.getPriority();
+        // 优化:如果task的执行时间小于当前时间戳则直接在list集合里面去删除，否则在ZSet集合里面删除
+        if (task.getExecuteTime() <= System.currentTimeMillis()) {
+            cacheService.lRemove(Constants.TOPIC + key, 0, JSON.toJSONString(task));
+        } else {
+            cacheService.zRemove(Constants.FUTURE + key, JSON.toJSONString(task));
+        }
     }
 
     @Override
@@ -153,15 +170,15 @@ public class TaskServiceImpl implements TaskService {
             // 得到时间点到现在的所有任务
             Set<String> tasks = cacheService.zRange(Constants.DBCACHE, 0, System.currentTimeMillis());
             // 返回最近的任务
-            if(tasks==null || tasks.isEmpty()) return null; // 还没有任务task来返回,则返回null
+            if (tasks == null || tasks.isEmpty()) return null; // 还没有任务task来返回,则返回null
             String value = tasks.iterator().next(); // 用迭代器得到最近的一个任务，因为zSet已经做了排序
             // 转换成对象
             task = JSON.parseObject(value, Task.class);
-            if (task.getExecuteTime()>System.currentTimeMillis()) return null;
+            if (task.getExecuteTime() > System.currentTimeMillis()) return null;
             // 从缓存中删除该任务
-            cacheService.zRemove(Constants.DBCACHE,value);
+            cacheService.zRemove(Constants.DBCACHE, value);
             // 更新数据库的信息
-            updateDB(task.getTaskId(),Constants.EXECUTED);
+            updateDB(task.getTaskId(), Constants.EXECUTED);
         } catch (Exception e) {
             log.warn("poll task exception");
             throw new TaskNotExistException(e);

@@ -31,7 +31,7 @@ public class TaskServiceTest {
     @Test
     public void cancel() {
         //取消任务
-        taskService.cancelTask(1642403148926574594L);
+        taskService.cancelTask(1642480512582856705L);
     }
 
     @Test
