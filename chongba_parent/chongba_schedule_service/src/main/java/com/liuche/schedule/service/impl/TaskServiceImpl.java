@@ -1,9 +1,9 @@
 package com.liuche.schedule.service.impl;
 
-import com.liuche.entity.Constants;
-import com.liuche.entity.Task;
-import com.liuche.exception.ScheduleSystemException;
-import com.liuche.exception.TaskNotExistException;
+import com.liuche.common.entity.Constants;
+import com.liuche.common.entity.Task;
+import com.liuche.common.exception.ScheduleSystemException;
+import com.liuche.common.exception.TaskNotExistException;
 import com.liuche.schedule.entity.TaskInfo;
 import com.liuche.schedule.entity.TaskInfoLogs;
 import com.liuche.schedule.mapper.TaskInfoLogsMapper;

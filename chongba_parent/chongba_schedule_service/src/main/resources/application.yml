@@ -7,3 +7,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: liuche
+  redis:
+    host: liuche17.xyz
+    password: liuche
+    database: 1
+    port: 6379

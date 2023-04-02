@@ -1,6 +1,6 @@
 package com.liuche.shedule;
 
-import com.liuche.entity.Task;
+import com.liuche.common.entity.Task;
 import com.liuche.schedule.ScheduleApplication;
 import com.liuche.schedule.service.TaskService;
 import org.junit.Test;

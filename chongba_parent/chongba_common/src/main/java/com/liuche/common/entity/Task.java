@@ -1,4 +1,4 @@
-package com.liuche.entity;
+package com.liuche.common.entity;
 
 import lombok.Data;
 

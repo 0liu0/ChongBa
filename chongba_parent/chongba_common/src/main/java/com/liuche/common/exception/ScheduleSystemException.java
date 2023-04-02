@@ -1,4 +1,4 @@
-package com.liuche.exception;
+package com.liuche.common.exception;
 
 public class ScheduleSystemException extends RuntimeException{
 

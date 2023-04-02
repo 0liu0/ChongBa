@@ -1,8 +1,8 @@
 package com.liuche.schedule.service;
 
-import com.liuche.entity.Task;
-import com.liuche.exception.ScheduleSystemException;
-import com.liuche.exception.TaskNotExistException;
+import com.liuche.common.entity.Task;
+import com.liuche.common.exception.ScheduleSystemException;
+import com.liuche.common.exception.TaskNotExistException;
 
 public interface TaskService {
     /**

@@ -1,4 +1,4 @@
-package com.liuche.exception;
+package com.liuche.common.exception;
 
 public class TaskNotExistException extends RuntimeException{
     private static final long serialVersionUID = 1463995109499516408L;
