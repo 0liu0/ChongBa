@@ -18,7 +18,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -112,5 +114,35 @@ public class TaskServiceImpl implements TaskService {
         cacheService.zRemove(Constants.DBCACHE, JSON.toJSONString(task));
     }
 
+    @Override
+    public long size() { // 返回当前缓存中的任务的数量
+        Set<String> strings = cacheService.zRangeAll(Constants.DBCACHE);
+        return strings.size();
+    }
 
+    @Override
+    @Transactional
+    public Task poll() throws TaskNotExistException { // 拉取当前最近的任务
+        Task task;
+        try {
+            // 得到时间点到现在的所有任务
+            Set<String> tasks = cacheService.zRange(Constants.DBCACHE, 0, System.currentTimeMillis());
+            // 返回最近的任务
+            if(tasks==null || tasks.isEmpty()) return null; // 还没有任务task来返回,则返回null
+            String value = tasks.iterator().next(); // 用迭代器得到最近的一个任务，因为zSet已经做了排序
+            // 转换成对象
+            task = JSON.parseObject(value, Task.class);
+            if (task.getExecuteTime()>System.currentTimeMillis()) return null;
+            // 从缓存中删除该任务
+            cacheService.zRemove(Constants.DBCACHE,value);
+            // 更新数据库的信息
+            updateDB(task.getTaskId(),Constants.EXECUTED);
+        } catch (Exception e) {
+            log.warn("poll task exception");
+            throw new TaskNotExistException(e);
+        }
+
+        // 返回任务
+        return task;
+    }
 }
