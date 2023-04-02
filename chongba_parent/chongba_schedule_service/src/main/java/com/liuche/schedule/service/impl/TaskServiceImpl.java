@@ -1,6 +1,7 @@
 package com.liuche.schedule.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.liuche.common.entity.Constants;
 import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
@@ -46,8 +47,9 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void saveTaskInCache(Task task) {
-        cacheService.zAdd(Constants.DBCACHE, JSON.toJSONString(task),task.getExecuteTime());
+        cacheService.zAdd(Constants.DBCACHE, JSON.toJSONString(task), task.getExecuteTime());
     }
+
     public boolean saveTaskInDB(Task task) {
         try {
             // 未执行任务入库
@@ -72,21 +74,43 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    @Transactional
     public boolean cancelTask(long taskId) throws TaskNotExistException {
         /*
-            删除任务表中的数据
-            更新日志表中的任务状态：2
+            根据任务id更新数据库Task updateDb(long taskId,int status)：删除任务表数据，更新任务日志表状态为已取消
+            更新完成后返回任务对象Task，从redis中删除任务数据 removeTaskFromCache(Task task)
         * */
         try {
-            taskInfoMapper.deleteById(taskId);
-            TaskInfoLogs taskLog = taskInfoLogsMapper.selectById(taskId);
-            taskLog.setStatus(Constants.CANCELLED);
-            taskInfoLogsMapper.updateById(taskLog);
+            Task task = updateDB(taskId, Constants.CANCELLED);
+            removeTaskFromCache(task);
         } catch (Exception e) {
             log.warn("task cancel exception taskid={}", taskId);
             throw new TaskNotExistException(e);
         }
         return true;
     }
+
+    private Task updateDB(long taskId, int status) {
+        Task task = null;
+        try {
+            // 删除数据库中taskinfo中的Task
+            taskInfoMapper.deleteById(taskId);
+            // 修改taskinfo_logs数据剧中的STATUS状态信息
+            TaskInfoLogs taskLog = taskInfoLogsMapper.selectById(taskId);
+            taskLog.setStatus(status);
+            task = CopyUtil.copy(taskLog, Task.class);
+            task.setExecuteTime(taskLog.getExecuteTime().getTime());
+            taskInfoLogsMapper.updateById(taskLog);
+            return task; // 返回task对象
+        } catch (Exception e) {
+            log.warn("task cancel exception taskid={}", taskId);
+            throw new TaskNotExistException(e);
+        }
+    }
+
+    private void removeTaskFromCache(Task task) {
+        cacheService.zRemove(Constants.DBCACHE, JSON.toJSONString(task));
+    }
+
 
 }
