@@ -1,6 +1,7 @@
 package com.liuche.shedule;
 
 import com.liuche.common.entity.Task;
+import com.liuche.common.utils.CacheService;
 import com.liuche.schedule.ScheduleApplication;
 import com.liuche.schedule.service.TaskService;
 import org.junit.Test;
@@ -10,12 +11,15 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Date;
+import java.util.Set;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = ScheduleApplication.class)
 public class TaskServiceTest {
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private CacheService cacheService;
 
     @Test
     public void taskAdd() {
@@ -78,6 +82,18 @@ public class TaskServiceTest {
             task.setExecuteTime(new Date().getTime() + 10000 * i);
             task.setParameters("testPoolTask".getBytes());
             taskService.addTask(task);
+        }
+    }
+
+    @Test
+    public void test04() {
+        Set<String> keys = cacheService.keys("future_*");
+        for (String key : keys) {
+            System.out.println(key+"key");
+        }
+        Set<String> scan = cacheService.scan("future_*");
+        for (String key : scan) {
+            System.out.println(key+"scan");
         }
     }
 
