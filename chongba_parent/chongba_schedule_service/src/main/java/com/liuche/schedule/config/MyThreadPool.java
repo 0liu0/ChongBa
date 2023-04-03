@@ -26,8 +26,8 @@ public class MyThreadPool extends ThreadPoolTaskExecutor {
         long completedTaskCount = this.getThreadPoolExecutor().getCompletedTaskCount();
         int activeCount = this.getThreadPoolExecutor().getActiveCount();
         int queueSize = this.getThreadPoolExecutor().getQueue().size();
-        log.info("prefix={},info={},taskCount={},completedCount={},activeCount={},queueSize={}",prefix,
-                msg,taskCount,completedTaskCount,activeCount,queueSize);
+//        log.info("prefix={},info={},taskCount={},completedCount={},activeCount={},queueSize={}",prefix,
+//                msg,taskCount,completedTaskCount,activeCount,queueSize);
 
     }
 

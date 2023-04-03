@@ -23,7 +23,6 @@ public class ThreadTest {
                 @Override
                 public void run() {
                     System.out.println("visibleThreadPool test- "+Thread.currentThread().getName());
-
                 }
             });
         }

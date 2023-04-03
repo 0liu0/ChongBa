@@ -24,8 +24,8 @@ public class TaskServiceTest {
     @Test
     public void taskAdd() {
         Task task = new Task();
-        task.setTaskType(1009);
-        task.setPriority(100);
+        task.setTaskType(250);
+        task.setPriority(250);
         task.setExecuteTime(new Date().getTime());
         task.setParameters("taskServiceTest".getBytes());
         long taskId = taskService.addTask(task);

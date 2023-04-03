@@ -15,6 +15,7 @@ import com.liuche.schedule.utils.CopyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -23,10 +24,15 @@ import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService {
+    @Autowired
+    private ThreadPoolTaskExecutor poolTaskExecutor;
     @Autowired
     private TaskInfoMapper taskInfoMapper;
     @Autowired
@@ -73,11 +79,26 @@ public class TaskServiceImpl implements TaskService {
             向任务日志表中添加数据
             将延时任务写入缓存
         * */
-        boolean flag = saveTaskInDB(task);
-        if (flag) {
-            saveTaskInCache(task);
+        Future<Long> future = poolTaskExecutor.submit(() -> {
+            boolean flag = saveTaskInDB(task);
+            if (flag) {
+                saveTaskInCache(task);
+            }
+            return task.getTaskId();
+        });
+        Long id;
+        try {
+            id = future.get();
+        } catch (Exception e) {
+            log.warn("addTask was in mistake!");
+            throw new ScheduleSystemException(e);
         }
-        return task.getTaskId();
+        return id;
+//        boolean flag = saveTaskInDB(task);
+//        if (flag) {
+//            saveTaskInCache(task);
+//        }
+//        return task.getTaskId();
     }
 
     private void saveTaskInCache(Task task) {
@@ -94,7 +115,7 @@ public class TaskServiceImpl implements TaskService {
 
     }
 
-    public boolean saveTaskInDB(Task task) {
+    private boolean saveTaskInDB(Task task) {
         try {
             // 未执行任务入库
             TaskInfo taskInfo = CopyUtil.copy(task, TaskInfo.class);
@@ -175,19 +196,46 @@ public class TaskServiceImpl implements TaskService {
     @Transactional
     public Task poll(int type, int priority) throws TaskNotExistException { // 拉取当前最近的任务
         Task task = null;
-        try {
-            // 从list得到当前可执行的定时任务
-            String key = Constants.TOPIC + type + "_" + priority;
-            String str = cacheService.lRightPop(key);
-            if (StringUtils.hasLength(str)){
-                task = JSON.parseObject(str, Task.class);
-                // 更新数据库信息
-                updateDB(task.getTaskId(), Constants.EXECUTED);
+        Future<Task> future = poolTaskExecutor.submit(() -> {
+            try {
+                // 从list得到当前可执行的定时任务
+                String key = Constants.TOPIC + type + "_" + priority;
+                String str = cacheService.lRightPop(key);
+                Task t = null;
+                if (StringUtils.hasLength(str)) {
+                    t = JSON.parseObject(str, Task.class);
+                    // 更新数据库信息
+                    updateDB(t.getTaskId(), Constants.EXECUTED);
+                }
+                return t;
+            } catch (Exception e) {
+                log.warn("poll() was in mistake!");
+                throw new ScheduleSystemException(e);
             }
+        });
+        try {
+            task = future.get();
         } catch (Exception e) {
-            log.warn("poll task exception");
-            throw new TaskNotExistException(e);
+            log.warn("poll() was in mistake!");
+            throw new ScheduleSystemException(e);
         }
+        // 返回任务
+        return task;
+//        try {
+//            // 从list得到当前可执行的定时任务
+//            String key = Constants.TOPIC + type + "_" + priority;
+//            String str = cacheService.lRightPop(key);
+//            if (StringUtils.hasLength(str)){
+//                task = JSON.parseObject(str, Task.class);
+//                // 更新数据库信息
+//                updateDB(task.getTaskId(), Constants.EXECUTED);
+//            }
+//        } catch (Exception e) {
+//            log.warn("poll task exception");
+//            throw new TaskNotExistException(e);
+//        }
+//        // 返回任务
+//        return task;
 //        try {
 //            // 得到时间点到现在的所有任务
 //            Set<String> tasks = cacheService.zRange(Constants.DBCACHE, 0, System.currentTimeMillis());
@@ -205,8 +253,5 @@ public class TaskServiceImpl implements TaskService {
 //            log.warn("poll task exception");
 //            throw new TaskNotExistException(e);
 //        }
-
-        // 返回任务
-        return task;
     }
 }
