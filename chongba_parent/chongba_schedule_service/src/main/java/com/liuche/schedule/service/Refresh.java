@@ -22,6 +22,7 @@ public class Refresh {
         System.out.println(System.currentTimeMillis()/1000+"：执行了定时任务");
         // 2.遍历keys集合，得到所有可以执行的定时任务
         for (String key : keys) {
+            // 使用tasks装所有可执行的task
             Set<String> tasks = cacheService.zRangeByScore(key, 0, System.currentTimeMillis());
             String topicKey =Constants.TOPIC+key.split(Constants.FUTURE)[1];
             // 3.push到指定的list集合中
