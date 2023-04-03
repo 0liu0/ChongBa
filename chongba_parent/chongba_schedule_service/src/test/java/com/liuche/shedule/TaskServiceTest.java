@@ -24,8 +24,8 @@ public class TaskServiceTest {
     @Test
     public void taskAdd() {
         Task task = new Task();
-        task.setTaskType(250);
-        task.setPriority(250);
+        task.setTaskType(1009);
+        task.setPriority(100);
         task.setExecuteTime(new Date().getTime());
         task.setParameters("taskServiceTest".getBytes());
         long taskId = taskService.addTask(task);
@@ -50,16 +50,16 @@ public class TaskServiceTest {
         long now = System.currentTimeMillis();
         for (int i = 0; i < 3; i++) {
             Task task = new Task();
-            task.setTaskType(250);
-            task.setPriority(250);
+            task.setTaskType(1001);
+            task.setPriority(50);
             task.setExecuteTime(now + 5000 * i);
             task.setParameters("testPoolTask".getBytes());
             taskService.addTask(task);
         }
         // 拉取任务
-        while (taskService.size(250,250) > 0) {
+        while (taskService.size(1001,50) > 0) {
             // 得到一个任务
-            Task task = taskService.poll(250,250);
+            Task task = taskService.poll(1001,50);
             // 如果任务为不为null
             if (task != null) {
                 System.out.println("成功消费了任务：" + task.getTaskId());

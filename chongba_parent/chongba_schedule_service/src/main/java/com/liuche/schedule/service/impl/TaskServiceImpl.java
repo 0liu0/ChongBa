@@ -1,6 +1,7 @@
 package com.liuche.schedule.service.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.liuche.common.entity.Constants;
 import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
@@ -23,10 +24,11 @@ import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
@@ -43,20 +45,78 @@ public class TaskServiceImpl implements TaskService {
 
     @PostConstruct
     private void syncData() {
-        System.out.println("init ..............");
-        // 清除缓存中原有的数据
+        /**
+         * 清除缓存原有数据：编写：clearCache()
+         查询所有任务数据：调用 taskMapper.selectAll()
+         将任务数据放入缓存：封装Task，调用addTaskToCache(task);
+         */
+        System.out.println("init");
         clearCache();
-        //从数据库查询所有任务数据
-        List<TaskInfo> allTaskInfo = taskInfoMapper.selectList(null);
-        //将任务数据存入缓存
-        for (TaskInfo taskInfoEntity : allTaskInfo) {
-            Task task = new Task();
-            //属性拷贝
-            BeanUtils.copyProperties(taskInfoEntity, task);
-            task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
-            //放入缓存
-            saveTaskInCache(task);
+        //查询所有任务类型和优先级的分组
+        QueryWrapper<TaskInfo> wrapper = new QueryWrapper<>();
+        wrapper.select("task_type","priority");
+        wrapper.groupBy("task_type","priority");
+        List<Map<String, Object>> maps = taskInfoMapper.selectMaps(wrapper);
+        long start = System.currentTimeMillis();
+
+        CountDownLatch latch = new CountDownLatch(maps.size());
+
+        for (Map<String, Object> map : maps) {
+
+            poolTaskExecutor.execute(new Runnable() {
+                @Override
+                public void run() {
+                    String task_type = String.valueOf(map.get("task_type"));
+                    String priority = String.valueOf(map.get("priority"));
+                    //根据任务类型和优先级去查询该组下的任务数据
+                    List<TaskInfo> allTasks = taskInfoMapper.queryAll(Integer.parseInt(task_type), Integer.parseInt(priority));
+
+                    if(allTasks!=null && ! allTasks.isEmpty()){
+                        for (TaskInfo taskInfoEntity : allTasks) {
+                            Task task = new Task();
+                            BeanUtils.copyProperties(taskInfoEntity,task);
+                            task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
+                            saveTaskInCache(task);
+                        }
+                    }
+
+                    latch.countDown();
+                    log.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
+                            Thread.currentThread().getName(),latch.getCount(),System.currentTimeMillis()-start);
+                }
+            });
         }
+
+        try {
+            //阻塞当前线程 当latch=0结束阻塞
+            latch.await(5, TimeUnit.MINUTES);
+            log.info("数据恢复完成，耗时{}",System.currentTimeMillis()-start);
+        } catch (InterruptedException e) {
+            log.error("数据恢复出现异常，异常信息{}",e.getMessage());
+        }
+        /*List<TaskInfoEntity> allTasks = infoMapper.selectAll();
+        if(allTasks!=null && ! allTasks.isEmpty()){
+            for (TaskInfoEntity taskInfoEntity : allTasks) {
+                Task task = new Task();
+                BeanUtils.copyProperties(taskInfoEntity,task);
+                task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
+                addTaskToCache(task);
+            }
+        }*/
+//        System.out.println("init ..............");
+//        // 清除缓存中原有的数据
+//        clearCache();
+//        //从数据库查询所有任务数据
+//        List<TaskInfo> allTaskInfo = taskInfoMapper.selectList(null);
+//        //将任务数据存入缓存
+//        for (TaskInfo taskInfoEntity : allTaskInfo) {
+//            Task task = new Task();
+//            //属性拷贝
+//            BeanUtils.copyProperties(taskInfoEntity, task);
+//            task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
+//            //放入缓存
+//            saveTaskInCache(task);
+//        }
     }
 
     private void clearCache() {
@@ -195,7 +255,7 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public Task poll(int type, int priority) throws TaskNotExistException { // 拉取当前最近的任务
-        Task task = null;
+        Task task;
         Future<Task> future = poolTaskExecutor.submit(() -> {
             try {
                 // 从list得到当前可执行的定时任务
