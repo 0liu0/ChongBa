@@ -14,6 +14,8 @@ import com.liuche.schedule.mapper.TaskInfoMapper;
 import com.liuche.schedule.service.TaskService;
 import com.liuche.schedule.utils.CopyUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -33,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService {
+    private static final Logger threadLog = LoggerFactory.getLogger("thread");
     @Autowired
     private ThreadPoolTaskExecutor poolTaskExecutor;
     @Autowired
@@ -81,7 +84,7 @@ public class TaskServiceImpl implements TaskService {
                     }
 
                     latch.countDown();
-                    log.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
+                    threadLog.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
                             Thread.currentThread().getName(),latch.getCount(),System.currentTimeMillis()-start);
                 }
             });
@@ -90,9 +93,9 @@ public class TaskServiceImpl implements TaskService {
         try {
             //阻塞当前线程 当latch=0结束阻塞
             latch.await(5, TimeUnit.MINUTES);
-            log.info("数据恢复完成，耗时{}",System.currentTimeMillis()-start);
+            threadLog.info("数据恢复完成，耗时{}",System.currentTimeMillis()-start);
         } catch (InterruptedException e) {
-            log.error("数据恢复出现异常，异常信息{}",e.getMessage());
+            threadLog.error("数据恢复出现异常，异常信息{}",e.getMessage());
         }
         /*List<TaskInfoEntity> allTasks = infoMapper.selectAll();
         if(allTasks!=null && ! allTasks.isEmpty()){
@@ -150,7 +153,7 @@ public class TaskServiceImpl implements TaskService {
         try {
             id = future.get();
         } catch (Exception e) {
-            log.warn("addTask was in mistake!");
+            threadLog.warn("addTask was in mistake!");
             throw new ScheduleSystemException(e);
         }
         return id;
@@ -192,7 +195,7 @@ public class TaskServiceImpl implements TaskService {
             taskInfoLogsMapper.insert(infoLogs);
         } catch (Exception e) {
             // 日志记录
-            log.warn("add task exception taskid={}", task.getTaskId());
+            threadLog.warn("add task exception taskid={}", task.getTaskId());
             throw new ScheduleSystemException(e.getMessage());
         }
         return true;
@@ -209,7 +212,7 @@ public class TaskServiceImpl implements TaskService {
             Task task = updateDB(taskId, Constants.CANCELLED);
             removeTaskFromCache(task);
         } catch (Exception e) {
-            log.warn("task cancel exception taskid={}", taskId);
+            threadLog.warn("task cancel exception taskid={}", taskId);
             throw new TaskNotExistException(e);
         }
         return true;
@@ -228,7 +231,7 @@ public class TaskServiceImpl implements TaskService {
             taskInfoLogsMapper.updateById(taskLog);
             return task; // 返回task对象
         } catch (Exception e) {
-            log.warn("task cancel exception taskid={}", taskId);
+            threadLog.warn("task cancel exception taskid={}", taskId);
             throw new TaskNotExistException(e);
         }
     }
@@ -269,14 +272,14 @@ public class TaskServiceImpl implements TaskService {
                 }
                 return t;
             } catch (Exception e) {
-                log.warn("poll() was in mistake!");
+                threadLog.warn("poll() was in mistake!");
                 throw new ScheduleSystemException(e);
             }
         });
         try {
             task = future.get();
         } catch (Exception e) {
-            log.warn("poll() was in mistake!");
+            threadLog.warn("poll() was in mistake!");
             throw new ScheduleSystemException(e);
         }
         // 返回任务
@@ -291,7 +294,7 @@ public class TaskServiceImpl implements TaskService {
 //                updateDB(task.getTaskId(), Constants.EXECUTED);
 //            }
 //        } catch (Exception e) {
-//            log.warn("poll task exception");
+//            threadLog.warn("poll task exception");
 //            throw new TaskNotExistException(e);
 //        }
 //        // 返回任务
@@ -310,7 +313,7 @@ public class TaskServiceImpl implements TaskService {
 //            // 更新数据库的信息
 //            updateDB(task.getTaskId(), Constants.EXECUTED);
 //        } catch (Exception e) {
-//            log.warn("poll task exception");
+//            threadLog.warn("poll task exception");
 //            throw new TaskNotExistException(e);
 //        }
     }
