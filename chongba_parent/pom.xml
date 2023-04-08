@@ -10,6 +10,7 @@
     <modules>
         <module>chongba_schedule_service</module>
         <module>chongba_common</module>
+        <module>chongba_schedule_feign</module>
     </modules>
 
     <properties>

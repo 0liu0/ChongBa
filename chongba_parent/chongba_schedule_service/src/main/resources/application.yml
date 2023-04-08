@@ -1,8 +1,8 @@
 server:
-  port: 9100
+  port: 9101
 spring:
   application:
-    name: schedule-service-9100
+    name: schedule-service
   # 连接mysql
   datasource:
     url: jdbc:mysql://localhost:3306/chongba
