@@ -1,6 +1,8 @@
+server:
+  port: 9100
 spring:
   application:
-    name: schedule-service
+    name: schedule-service-9100
   # 连接mysql
   datasource:
     url: jdbc:mysql://localhost:3306/chongba
@@ -12,5 +14,8 @@ spring:
     password: liuche
     database: 1
     port: 6379
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
 chongba:
   preLoad: 2 #预加载时间配置

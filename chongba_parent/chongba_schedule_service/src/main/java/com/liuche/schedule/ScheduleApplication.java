@@ -18,6 +18,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 @MapperScan("com.liuche.schedule.mapper")
 @ComponentScan({"com.liuche.common.utils","com.liuche.schedule.service","com.liuche.schedule.config","com.liuche.schedule.controller"})
 @EnableScheduling
+@EnableDiscoveryClient // 配置nacos
 public class ScheduleApplication {
     public static void main(String[] args) {
         SpringApplication.run(ScheduleApplication.class, args);
