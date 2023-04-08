@@ -7,6 +7,7 @@ import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
 import com.liuche.common.exception.TaskNotExistException;
 import com.liuche.common.utils.CacheService;
+import com.liuche.schedule.config.SystemParams;
 import com.liuche.schedule.entity.TaskInfo;
 import com.liuche.schedule.entity.TaskInfoLogs;
 import com.liuche.schedule.mapper.TaskInfoLogsMapper;
@@ -19,15 +20,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -37,17 +36,24 @@ import java.util.concurrent.TimeUnit;
 public class TaskServiceImpl implements TaskService {
     private static final Logger threadLog = LoggerFactory.getLogger("thread");
     @Autowired
+    private ThreadPoolTaskScheduler threadPoolTaskScheduler;
+    @Autowired
     private ThreadPoolTaskExecutor poolTaskExecutor;
     @Autowired
     private TaskInfoMapper taskInfoMapper;
     @Autowired
     private TaskInfoLogsMapper taskInfoLogsMapper;
+    @Autowired
+    private SystemParams params;
 
     @Autowired
     private CacheService cacheService;
 
     @PostConstruct
     private void syncData() {
+         threadPoolTaskScheduler.scheduleAtFixedRate(this::init,TimeUnit.MINUTES.toMillis(params.getPreLoad())); // 两分钟执行数据恢复init的方法
+    }
+    private void init(){
         /**
          * 清除缓存原有数据：编写：clearCache()
          查询所有任务数据：调用 taskMapper.selectAll()
@@ -62,31 +68,37 @@ public class TaskServiceImpl implements TaskService {
         List<Map<String, Object>> maps = taskInfoMapper.selectMaps(wrapper);
         long start = System.currentTimeMillis();
 
+        // 得到当前时间的未来两分钟时间
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MINUTE,params.getPreLoad());
+
         CountDownLatch latch = new CountDownLatch(maps.size());
 
         for (Map<String, Object> map : maps) {
 
-            poolTaskExecutor.execute(new Runnable() {
-                @Override
-                public void run() {
-                    String task_type = String.valueOf(map.get("task_type"));
-                    String priority = String.valueOf(map.get("priority"));
-                    //根据任务类型和优先级去查询该组下的任务数据
-                    List<TaskInfo> allTasks = taskInfoMapper.queryAll(Integer.parseInt(task_type), Integer.parseInt(priority));
-
-                    if(allTasks!=null && ! allTasks.isEmpty()){
-                        for (TaskInfo taskInfoEntity : allTasks) {
-                            Task task = new Task();
-                            BeanUtils.copyProperties(taskInfoEntity,task);
-                            task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
-                            saveTaskInCache(task);
-                        }
-                    }
-
-                    latch.countDown();
-                    threadLog.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
-                            Thread.currentThread().getName(),latch.getCount(),System.currentTimeMillis()-start);
+            poolTaskExecutor.execute(() -> {
+                String task_type = String.valueOf(map.get("task_type"));
+                String priority = String.valueOf(map.get("priority"));
+                //根据任务类型和优先级去查询该组下的任务数据
+                // List<TaskInfo> allTasks = taskInfoMapper.queryAll(Integer.parseInt(task_type), Integer.parseInt(priority));
+                // 获取此刻到未来时间的任务
+                List<TaskInfo> allTasks = taskInfoMapper.queryFuture(Integer.parseInt(task_type), Integer.parseInt(priority),calendar.getTime());
+                System.out.println("=================>");
+                for (TaskInfo task : allTasks) {
+                    System.out.println(task);
                 }
+                if(allTasks!=null && ! allTasks.isEmpty()){
+                    for (TaskInfo taskInfoEntity : allTasks) {
+                        Task task = new Task();
+                        BeanUtils.copyProperties(taskInfoEntity,task);
+                        task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
+                        saveTaskInCache(task);
+                    }
+                }
+
+                latch.countDown();
+                threadLog.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
+                        Thread.currentThread().getName(),latch.getCount(),System.currentTimeMillis()-start);
             });
         }
 
@@ -120,6 +132,7 @@ public class TaskServiceImpl implements TaskService {
 //            //放入缓存
 //            saveTaskInCache(task);
 //        }
+
     }
 
     private void clearCache() {
@@ -171,7 +184,7 @@ public class TaskServiceImpl implements TaskService {
             // 当前任务在当前状态就需执行，存到redis中list集合中，减少时间复杂度
             // 存放到list集合中
             cacheService.lLeftPush(Constants.TOPIC + key, JSON.toJSONString(task));
-        } else {
+        } else if (task.getExecuteTime()<=System.currentTimeMillis()+1000*(params.getPreLoad()* 60L)){
             // 未来需要执行的任务，存放到ZSet集合里面去
             cacheService.zAdd(Constants.FUTURE + key, JSON.toJSONString(task), task.getExecuteTime());
         }

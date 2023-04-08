@@ -3,12 +3,14 @@ spring:
     name: schedule-service
   # 连接mysql
   datasource:
-    url: jdbc:mysql://106.14.62.220:3306/chongba
+    url: jdbc:mysql://localhost:3306/chongba
     driver-class-name: com.mysql.cj.jdbc.Driver
     username: root
     password: liuche
   redis:
-    host: liuche17.xyz
+    host: 192.168.253.3
     password: liuche
     database: 1
     port: 6379
+chongba:
+  preLoad: 2 #预加载时间配置
