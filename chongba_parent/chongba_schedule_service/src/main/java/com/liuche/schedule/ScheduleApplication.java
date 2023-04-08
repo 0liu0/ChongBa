@@ -6,6 +6,7 @@ import com.liuche.schedule.config.MyThreadPool;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,7 +16,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 @SpringBootApplication
 @MapperScan("com.liuche.schedule.mapper")
-@ComponentScan({"com.liuche.common.utils","com.liuche.schedule.service","com.liuche.schedule.config"})
+@ComponentScan({"com.liuche.common.utils","com.liuche.schedule.service","com.liuche.schedule.config","com.liuche.schedule.controller"})
 @EnableScheduling
 public class ScheduleApplication {
     public static void main(String[] args) {
