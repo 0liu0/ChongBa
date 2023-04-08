@@ -16,15 +16,15 @@ public class Refresh {
     @Autowired
     private CacheService cacheService;
 
-    @Scheduled(cron = "*/1 * * * * ? ")
-    public void refresh() throws InterruptedException {
+//    @Scheduled(cron = "*/1 * * * * ? ")
+    public void refresh() {
         poolTaskExecutor.execute(() -> {
             // 得到所有可以执行的定时任务
             // 1.得到所有前缀具有Constants.FUTURE + "*"的key
             String str = Constants.FUTURE + "*";
             Set<String> keys = cacheService.scan(str);
-            if (keys.size() == 0) return;
             System.out.println(System.currentTimeMillis() / 1000 + "：执行了定时任务");
+            if (keys.size() == 0) return;
             // 2.遍历keys集合，得到所有可以执行的定时任务
             for (String key : keys) {
                 // 使用tasks装所有可执行的task

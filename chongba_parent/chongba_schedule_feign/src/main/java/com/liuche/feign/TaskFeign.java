@@ -14,4 +14,6 @@ public interface TaskFeign {
     ResponseMessage pollTask(@PathVariable Integer priority, @PathVariable Integer taskType);
     @GetMapping ("/cancel")
     ResponseMessage cancelTask(@RequestParam("taskId") Long taskId);
+    @GetMapping("/refresh")
+    ResponseMessage refresh();
 }

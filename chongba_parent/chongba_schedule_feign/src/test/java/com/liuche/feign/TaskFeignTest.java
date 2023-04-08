@@ -40,5 +40,11 @@ public class TaskFeignTest {
         taskFeign.cancelTask(1644704445173780482L);// 从数据库或缓存中查找一个任务id
     }
 
+    @Test
+    public void test4() {
+        ResponseMessage refresh = taskFeign.refresh();
+        System.out.println(refresh);
+    }
+
 
 }

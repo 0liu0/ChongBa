@@ -4,6 +4,7 @@ import com.liuche.common.entity.ResponseMessage;
 import com.liuche.common.entity.Task;
 import com.liuche.common.exception.ScheduleSystemException;
 import com.liuche.common.exception.TaskNotExistException;
+import com.liuche.schedule.service.Refresh;
 import com.liuche.schedule.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
     @Autowired
     private TaskService taskService;
+    @Autowired
+    private Refresh refresh;
 
     @GetMapping("/test")
     public ResponseMessage test() {
@@ -60,6 +63,16 @@ public class TaskController {
             log.info("cancel task exception {}",e.getMessage());
             return ResponseMessage.error(e.getMessage());
         }
+    }
+    @GetMapping("/refresh")
+    public ResponseMessage refresh() {
+        try {
+            refresh.refresh();
+        } catch (Exception e) {
+            log.warn("定时刷新失败！");
+            return ResponseMessage.error(e.getMessage());
+        }
+        return ResponseMessage.ok("刷新成功！");
     }
 
 }

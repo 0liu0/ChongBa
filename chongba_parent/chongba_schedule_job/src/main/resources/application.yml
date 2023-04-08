@@ -1,0 +1,9 @@
+server:
+  port: 9300
+spring:
+  application:
+    name: schedule-job
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848

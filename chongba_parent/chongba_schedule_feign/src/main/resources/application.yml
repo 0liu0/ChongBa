@@ -6,5 +6,5 @@ spring:
   cloud:
     nacos:
       discovery:
-        register-enabled: true
+        register-enabled: false # 只发现服务不注册
         server-addr: 127.0.0.1:8848

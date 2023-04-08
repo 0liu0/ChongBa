@@ -11,6 +11,7 @@
         <module>chongba_schedule_service</module>
         <module>chongba_common</module>
         <module>chongba_schedule_feign</module>
+        <module>chongba_schedule_job</module>
     </modules>
 
     <properties>
