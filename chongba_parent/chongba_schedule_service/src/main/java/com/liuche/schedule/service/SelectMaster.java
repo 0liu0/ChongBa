@@ -7,6 +7,7 @@ import org.apache.curator.framework.recipes.leader.LeaderSelector;
 import org.apache.curator.framework.recipes.leader.LeaderSelectorListenerAdapter;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -14,11 +15,12 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
+//@RefreshScope
 public class SelectMaster {
     @Autowired
     private SystemParams systemParams;
     //可以放很多节点
-    Map<String, Boolean> masterMap = new HashMap<String, Boolean>();
+    Map<String, Boolean> masterMap = new HashMap<>();
 
     public void selectMaster(String leaderPath) {
         CuratorFramework client = CuratorFrameworkFactory.builder().
