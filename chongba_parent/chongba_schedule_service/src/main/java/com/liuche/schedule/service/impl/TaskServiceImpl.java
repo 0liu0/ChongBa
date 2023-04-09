@@ -28,6 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.*;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Future;
@@ -35,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @Slf4j
-//@RefreshScope
 public class TaskServiceImpl implements TaskService {
     private static final Logger threadLog = LoggerFactory.getLogger("thread");
     @Autowired

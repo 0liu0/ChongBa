@@ -15,7 +15,6 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Component
-//@RefreshScope
 public class SelectMaster {
     @Autowired
     private SystemParams systemParams;

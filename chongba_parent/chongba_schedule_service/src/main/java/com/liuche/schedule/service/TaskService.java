@@ -18,8 +18,8 @@ public interface TaskService {
      * 取消任务
      *
      * @param taskId 任务id
-     * @return 取消结果
      * @throws TaskNotExistException
+     * @return 取消结果
      */
     public boolean cancelTask(long taskId) throws TaskNotExistException;
     long size(int type,int priority);
