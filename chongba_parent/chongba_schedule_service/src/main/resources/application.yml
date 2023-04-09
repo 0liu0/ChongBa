@@ -18,4 +18,5 @@ spring:
     nacos:
       server-addr: 127.0.0.1:8848
 chongba:
-  preLoad: 2 #预加载时间配置
+  preLoad: 1 #预加载时间配置
+  selectMasterZookeeper: 192.168.253.3:2181

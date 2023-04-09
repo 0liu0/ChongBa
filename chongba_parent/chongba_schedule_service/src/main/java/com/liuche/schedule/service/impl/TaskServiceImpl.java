@@ -12,6 +12,7 @@ import com.liuche.schedule.entity.TaskInfo;
 import com.liuche.schedule.entity.TaskInfoLogs;
 import com.liuche.schedule.mapper.TaskInfoLogsMapper;
 import com.liuche.schedule.mapper.TaskInfoMapper;
+import com.liuche.schedule.service.SelectMaster;
 import com.liuche.schedule.service.TaskService;
 import com.liuche.schedule.utils.CopyUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -45,15 +46,38 @@ public class TaskServiceImpl implements TaskService {
     private TaskInfoLogsMapper taskInfoLogsMapper;
     @Autowired
     private SystemParams params;
-
     @Autowired
     private CacheService cacheService;
+    @Autowired
+    private SelectMaster selectMaster;
 
     @PostConstruct
     private void syncData() {
-         threadPoolTaskScheduler.scheduleAtFixedRate(this::init,TimeUnit.MINUTES.toMillis(params.getPreLoad())); // 两分钟执行数据恢复init的方法
+        // 抢占主节点
+        selectMaster.selectMaster(Constants.schedule_leaderPath);
+        // 选取会有些许延迟等个一秒
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        threadPoolTaskScheduler.scheduleAtFixedRate(() -> {
+            // 判断是不是主节点，是主节点才执行刷新动作
+            if(selectMaster.checkMaster(Constants.schedule_leaderPath)){
+                threadLog.info("schedule-service主节点进行数据恢复reloadData---");
+                init();
+            }else {
+                threadLog.info("schedule-service从节点备用");
+            }
+        },TimeUnit.MINUTES.toMillis(params.getPreLoad()));
+
+//        boolean flag = selectMaster.checkMaster(Constants.schedule_leaderPath);
+//        if (flag) {
+//            threadPoolTaskScheduler.scheduleAtFixedRate(this::init, TimeUnit.MINUTES.toMillis(params.getPreLoad())); // 两分钟执行数据恢复init的方法
+//        }
     }
-    private void init(){
+
+    private void init() {
         /**
          * 清除缓存原有数据：编写：clearCache()
          查询所有任务数据：调用 taskMapper.selectAll()
@@ -63,14 +87,14 @@ public class TaskServiceImpl implements TaskService {
         clearCache();
         //查询所有任务类型和优先级的分组
         QueryWrapper<TaskInfo> wrapper = new QueryWrapper<>();
-        wrapper.select("task_type","priority");
-        wrapper.groupBy("task_type","priority");
+        wrapper.select("task_type", "priority");
+        wrapper.groupBy("task_type", "priority");
         List<Map<String, Object>> maps = taskInfoMapper.selectMaps(wrapper);
         long start = System.currentTimeMillis();
 
         // 得到当前时间的未来两分钟时间
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE,params.getPreLoad());
+        calendar.add(Calendar.MINUTE, params.getPreLoad());
 
         CountDownLatch latch = new CountDownLatch(maps.size());
 
@@ -82,15 +106,15 @@ public class TaskServiceImpl implements TaskService {
                 //根据任务类型和优先级去查询该组下的任务数据
                 // List<TaskInfo> allTasks = taskInfoMapper.queryAll(Integer.parseInt(task_type), Integer.parseInt(priority));
                 // 获取此刻到未来时间的任务
-                List<TaskInfo> allTasks = taskInfoMapper.queryFuture(Integer.parseInt(task_type), Integer.parseInt(priority),calendar.getTime());
+                List<TaskInfo> allTasks = taskInfoMapper.queryFuture(Integer.parseInt(task_type), Integer.parseInt(priority), calendar.getTime());
                 System.out.println("=================>");
                 for (TaskInfo task : allTasks) {
                     System.out.println(task);
                 }
-                if(allTasks!=null && ! allTasks.isEmpty()){
+                if (allTasks != null && !allTasks.isEmpty()) {
                     for (TaskInfo taskInfoEntity : allTasks) {
                         Task task = new Task();
-                        BeanUtils.copyProperties(taskInfoEntity,task);
+                        BeanUtils.copyProperties(taskInfoEntity, task);
                         task.setExecuteTime(taskInfoEntity.getExecuteTime().getTime());
                         saveTaskInCache(task);
                     }
@@ -98,16 +122,16 @@ public class TaskServiceImpl implements TaskService {
 
                 latch.countDown();
                 threadLog.info("当前线程名称{},计数器的值{},当前分组数据恢复的时间{}",
-                        Thread.currentThread().getName(),latch.getCount(),System.currentTimeMillis()-start);
+                        Thread.currentThread().getName(), latch.getCount(), System.currentTimeMillis() - start);
             });
         }
 
         try {
             //阻塞当前线程 当latch=0结束阻塞
             latch.await(5, TimeUnit.MINUTES);
-            threadLog.info("数据恢复完成，耗时{}",System.currentTimeMillis()-start);
+            threadLog.info("数据恢复完成，耗时{}", System.currentTimeMillis() - start);
         } catch (InterruptedException e) {
-            threadLog.error("数据恢复出现异常，异常信息{}",e.getMessage());
+            threadLog.error("数据恢复出现异常，异常信息{}", e.getMessage());
         }
         /*List<TaskInfoEntity> allTasks = infoMapper.selectAll();
         if(allTasks!=null && ! allTasks.isEmpty()){
@@ -184,7 +208,7 @@ public class TaskServiceImpl implements TaskService {
             // 当前任务在当前状态就需执行，存到redis中list集合中，减少时间复杂度
             // 存放到list集合中
             cacheService.lLeftPush(Constants.TOPIC + key, JSON.toJSONString(task));
-        } else if (task.getExecuteTime()<=System.currentTimeMillis()+1000*(params.getPreLoad()* 60L)){
+        } else if (task.getExecuteTime() <= System.currentTimeMillis() + 1000 * (params.getPreLoad() * 60L)) {
             // 未来需要执行的任务，存放到ZSet集合里面去
             cacheService.zAdd(Constants.FUTURE + key, JSON.toJSONString(task), task.getExecuteTime());
         }

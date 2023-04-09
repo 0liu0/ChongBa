@@ -8,4 +8,5 @@ import org.springframework.stereotype.Component;
 @ConfigurationProperties(prefix = "chongba")
 public class SystemParams {
     private int preLoad;
+    private String selectMasterZookeeper;
 }
