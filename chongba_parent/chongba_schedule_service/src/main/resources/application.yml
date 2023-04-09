@@ -20,3 +20,4 @@ spring:
 chongba:
   preLoad: 1 #预加载时间配置
   selectMasterZookeeper: 192.168.253.3:2181
+  name: liuche
