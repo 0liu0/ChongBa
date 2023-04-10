@@ -12,6 +12,10 @@
         <module>chongba_common</module>
         <module>chongba_schedule_feign</module>
         <module>chongba_schedule_job</module>
+        <module>chongba_recharge_trade</module>
+        <module>chongba_recharge_web</module>
+        <module>chongba_recharge_mock</module>
+
     </modules>
 
     <properties>

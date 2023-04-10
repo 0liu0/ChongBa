@@ -27,7 +27,7 @@ public class ResponseMessage {
     }
     
     public static ResponseMessage ok(Object data) {
-		return new ResponseMessage(true,StatusCode.OK,"success",data);
+		return new ResponseMessage(true, com.liuche.common.entity.StatusCode.OK,"success",data);
     }
     
     public static ResponseMessage error(Object data) {

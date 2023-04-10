@@ -3,7 +3,6 @@ package com.liuche.schedule.service;
 import com.liuche.common.entity.Constants;
 import com.liuche.common.utils.CacheService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 

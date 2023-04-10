@@ -1,0 +1,30 @@
+2023-04-07 22:55:04.698 [main] INFO  com.liuche.shedule.ThreadTest.logStarting:55 - Starting ThreadTest using Java 1.8.0_361 on DESKTOP-FD3Q2JK with PID 4768 (started by 70671 in D:\CODES\JAVA\projects\ChongBa\chongba_parent\chongba_schedule_service)
+2023-04-07 22:55:04.699 [main] INFO  com.liuche.shedule.ThreadTest.logStartupProfileInfo:645 - No active profile set, falling back to 1 default profile: "default"
+2023-04-07 22:55:05.069 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.multipleStoresDetected:262 - Multiple Spring Data modules found, entering strict repository configuration mode
+2023-04-07 22:55:05.071 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:132 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2023-04-07 22:55:05.089 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:201 - Finished Spring Data repository scanning in 9 ms. Found 0 Redis repository interfaces.
+2023-04-07 22:55:06.334 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:110 - HikariPool-1 - Starting...
+2023-04-07 22:55:06.922 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:123 - HikariPool-1 - Start completed.
+2023-04-07 22:55:07.880 [main] INFO  com.liuche.shedule.ThreadTest.logStarted:61 - Started ThreadTest in 3.481 seconds (JVM running for 4.044)
+2023-04-07 22:55:08.019 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+2023-04-07 22:55:08.105 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.
+2023-04-07 22:58:03.883 [main] INFO  com.liuche.shedule.TaskServiceTest.logStarting:55 - Starting TaskServiceTest using Java 1.8.0_361 on DESKTOP-FD3Q2JK with PID 18364 (started by 70671 in D:\CODES\JAVA\projects\ChongBa\chongba_parent\chongba_schedule_service)
+2023-04-07 22:58:03.884 [main] INFO  com.liuche.shedule.TaskServiceTest.logStartupProfileInfo:645 - No active profile set, falling back to 1 default profile: "default"
+2023-04-07 22:58:04.182 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.multipleStoresDetected:262 - Multiple Spring Data modules found, entering strict repository configuration mode
+2023-04-07 22:58:04.183 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:132 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2023-04-07 22:58:04.197 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:201 - Finished Spring Data repository scanning in 5 ms. Found 0 Redis repository interfaces.
+2023-04-07 22:58:05.505 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:110 - HikariPool-1 - Starting...
+2023-04-07 22:58:06.023 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:123 - HikariPool-1 - Start completed.
+2023-04-07 22:58:06.999 [main] INFO  com.liuche.shedule.TaskServiceTest.logStarted:61 - Started TaskServiceTest in 3.404 seconds (JVM running for 3.836)
+2023-04-07 22:58:21.047 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+2023-04-07 22:58:21.051 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.
+2023-04-07 22:59:10.918 [main] INFO  com.liuche.shedule.TaskServiceTest.logStarting:55 - Starting TaskServiceTest using Java 1.8.0_361 on DESKTOP-FD3Q2JK with PID 1972 (started by 70671 in D:\CODES\JAVA\projects\ChongBa\chongba_parent\chongba_schedule_service)
+2023-04-07 22:59:10.919 [main] INFO  com.liuche.shedule.TaskServiceTest.logStartupProfileInfo:645 - No active profile set, falling back to 1 default profile: "default"
+2023-04-07 22:59:11.221 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.multipleStoresDetected:262 - Multiple Spring Data modules found, entering strict repository configuration mode
+2023-04-07 22:59:11.222 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:132 - Bootstrapping Spring Data Redis repositories in DEFAULT mode.
+2023-04-07 22:59:11.235 [main] INFO  o.s.d.repository.config.RepositoryConfigurationDelegate.registerRepositoriesIn:201 - Finished Spring Data repository scanning in 5 ms. Found 0 Redis repository interfaces.
+2023-04-07 22:59:12.428 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:110 - HikariPool-1 - Starting...
+2023-04-07 22:59:12.932 [main] INFO  com.zaxxer.hikari.HikariDataSource.getConnection:123 - HikariPool-1 - Start completed.
+2023-04-07 22:59:13.633 [main] INFO  com.liuche.shedule.TaskServiceTest.logStarted:61 - Started TaskServiceTest in 2.96 seconds (JVM running for 3.361)
+2023-04-07 22:59:25.826 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:350 - HikariPool-1 - Shutdown initiated...
+2023-04-07 22:59:25.830 [SpringApplicationShutdownHook] INFO  com.zaxxer.hikari.HikariDataSource.close:352 - HikariPool-1 - Shutdown completed.

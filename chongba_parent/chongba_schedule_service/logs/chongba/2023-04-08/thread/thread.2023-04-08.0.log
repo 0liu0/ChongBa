@@ -1,0 +1,58 @@
+2023-04-08 14:55:22.463 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时0
+2023-04-08 14:57:21.474 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时87
+2023-04-08 14:57:21.474 [MyVisibleThread-4] INFO  thread.run:97 - 当前线程名称MyVisibleThread-4,计数器的值0,当前分组数据恢复的时间87
+2023-04-08 15:06:23.403 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时0
+2023-04-08 15:08:22.416 [MyVisibleThread-4] INFO  thread.run:97 - 当前线程名称MyVisibleThread-4,计数器的值0,当前分组数据恢复的时间56
+2023-04-08 15:08:22.416 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时56
+2023-04-08 15:10:40.884 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时1
+2023-04-08 15:12:39.953 [MyVisibleThread-3] INFO  thread.run:97 - 当前线程名称MyVisibleThread-3,计数器的值0,当前分组数据恢复的时间82
+2023-04-08 15:12:39.952 [scheduling-1] INFO  thread.init:106 - 数据恢复完成，耗时81
+2023-04-08 15:15:37.725 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:17:36.831 [MyVisibleThread-1] INFO  thread.run:100 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间81
+2023-04-08 15:17:36.831 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时81
+2023-04-08 15:19:20.229 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:21:19.362 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时108
+2023-04-08 15:21:19.362 [MyVisibleThread-9] INFO  thread.run:100 - 当前线程名称MyVisibleThread-9,计数器的值0,当前分组数据恢复的时间108
+2023-04-08 15:25:46.192 [MyVisibleThread-1] INFO  thread.run:100 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间416
+2023-04-08 15:25:46.192 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时416
+2023-04-08 15:27:44.982 [MyVisibleThread-3] INFO  thread.run:100 - 当前线程名称MyVisibleThread-3,计数器的值0,当前分组数据恢复的时间140
+2023-04-08 15:27:44.982 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时140
+2023-04-08 15:30:15.180 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:32:14.280 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时78
+2023-04-08 15:32:14.280 [MyVisibleThread-3] INFO  thread.run:100 - 当前线程名称MyVisibleThread-3,计数器的值0,当前分组数据恢复的时间78
+2023-04-08 15:34:00.222 [scheduling-1] INFO  thread.init:110 - 数据恢复完成，耗时318
+2023-04-08 15:34:00.222 [MyVisibleThread-1] INFO  thread.run:101 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间318
+2023-04-08 15:34:00.974 [MyVisibleThread-6] WARN  thread.updateDB:249 - task cancel exception taskid=1644603548572364802
+2023-04-08 15:34:00.974 [MyVisibleThread-6] WARN  thread.lambda$poll$1:290 - poll() was in mistake!
+2023-04-08 15:34:00.974 [main] WARN  thread.poll:297 - poll() was in mistake!
+2023-04-08 15:35:27.633 [MyVisibleThread-2] INFO  thread.run:101 - 当前线程名称MyVisibleThread-2,计数器的值0,当前分组数据恢复的时间265
+2023-04-08 15:35:27.633 [scheduling-1] INFO  thread.init:110 - 数据恢复完成，耗时265
+2023-04-08 15:37:11.278 [MyVisibleThread-2] INFO  thread.run:101 - 当前线程名称MyVisibleThread-2,计数器的值0,当前分组数据恢复的时间238
+2023-04-08 15:37:11.278 [scheduling-1] INFO  thread.init:110 - 数据恢复完成，耗时238
+2023-04-08 15:37:37.604 [MyVisibleThread-3] WARN  thread.updateDB:249 - task cancel exception taskid=1644604857090351105
+2023-04-08 15:37:37.605 [MyVisibleThread-3] WARN  thread.lambda$poll$1:290 - poll() was in mistake!
+2023-04-08 15:37:37.605 [main] WARN  thread.poll:297 - poll() was in mistake!
+2023-04-08 15:39:25.388 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:41:24.486 [MyVisibleThread-2] INFO  thread.run:100 - 当前线程名称MyVisibleThread-2,计数器的值0,当前分组数据恢复的时间81
+2023-04-08 15:41:24.486 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时81
+2023-04-08 15:44:16.476 [main] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:44:16.583 [scheduling-1] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 15:46:24.911 [main] INFO  thread.init:109 - 数据恢复完成，耗时0
+2023-04-08 16:02:37.982 [scheduling-1] INFO  thread.init:105 - 数据恢复完成，耗时0
+2023-04-08 16:07:47.690 [MyVisibleThread-1] INFO  thread.lambda$init$0:97 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间335
+2023-04-08 16:07:47.690 [scheduling-1] INFO  thread.init:105 - 数据恢复完成，耗时335
+2023-04-08 16:12:59.976 [scheduling-1] INFO  thread.init:105 - 数据恢复完成，耗时0
+2023-04-08 16:18:46.577 [scheduling-1] INFO  thread.init:105 - 数据恢复完成，耗时0
+2023-04-08 16:20:45.860 [MyVisibleThread-1] INFO  thread.lambda$init$0:97 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间29
+2023-04-08 16:20:45.860 [scheduling-1] INFO  thread.init:105 - 数据恢复完成，耗时29
+2023-04-08 16:26:23.353 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时0
+2023-04-08 16:27:22.622 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时32
+2023-04-08 16:27:22.622 [MyVisibleThread-1] INFO  thread.lambda$init$0:100 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间32
+2023-04-08 16:28:22.615 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时29
+2023-04-08 16:28:22.615 [MyVisibleThread-2] INFO  thread.lambda$init$0:100 - 当前线程名称MyVisibleThread-2,计数器的值0,当前分组数据恢复的时间29
+2023-04-08 16:29:22.592 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时0
+2023-04-08 16:30:22.585 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时0
+2023-04-08 16:31:22.590 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时0
+2023-04-08 16:39:45.040 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时0
+2023-04-08 16:41:44.367 [MyVisibleThread-3] INFO  thread.lambda$init$0:100 - 当前线程名称MyVisibleThread-3,计数器的值0,当前分组数据恢复的时间3
+2023-04-08 16:41:44.367 [scheduling-1] INFO  thread.init:108 - 数据恢复完成，耗时3

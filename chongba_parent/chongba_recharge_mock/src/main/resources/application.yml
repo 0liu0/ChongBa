@@ -1,0 +1,20 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: mock #供应商交互
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+  datasource:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      password: liuche
+      url: jdbc:mysql://localhost:3306/chongba
+      username: root
+  redis:
+      host: 192.168.253.3
+      password: liuche
+      port: 6379
+notify-url: http://127.0.0.1:99/order/notify
+openProxy: 0

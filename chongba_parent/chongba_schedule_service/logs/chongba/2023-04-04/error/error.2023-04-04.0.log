@@ -1,0 +1,106 @@
+2023-04-04 21:29:34.601 [main] ERROR o.s.transaction.interceptor.TransactionInterceptor.completeTransactionAfterThrowing:680 - Application exception overridden by rollback exception
+com.liuche.common.exception.ScheduleSystemException: java.util.concurrent.ExecutionException: com.liuche.common.exception.ScheduleSystemException: 
+### Error updating database.  Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+### The error may exist in com/liuche/schedule/mapper/TaskInfoMapper.java (best guess)
+### The error may involve com.liuche.schedule.mapper.TaskInfoMapper.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO taskinfo  ( task_id, execute_time, priority, task_type, parameters )  VALUES  ( ?, ?, ?, ?, ? )
+### Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+; Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.; nested exception is com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+	at com.liuche.schedule.service.impl.TaskServiceImpl.addTask(TaskServiceImpl.java:154)
+	at com.liuche.schedule.service.impl.TaskServiceImpl$$FastClassBySpringCGLIB$$46e8f639.invoke(<generated>)
+	at org.springframework.cglib.proxy.MethodProxy.invoke(MethodProxy.java:218)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.invokeJoinpoint(CglibAopProxy.java:793)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:163)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.transaction.interceptor.TransactionInterceptor$1.proceedWithInvocation(TransactionInterceptor.java:123)
+	at org.springframework.transaction.interceptor.TransactionAspectSupport.invokeWithinTransaction(TransactionAspectSupport.java:388)
+	at org.springframework.transaction.interceptor.TransactionInterceptor.invoke(TransactionInterceptor.java:119)
+	at org.springframework.aop.framework.ReflectiveMethodInvocation.proceed(ReflectiveMethodInvocation.java:186)
+	at org.springframework.aop.framework.CglibAopProxy$CglibMethodInvocation.proceed(CglibAopProxy.java:763)
+	at org.springframework.aop.framework.CglibAopProxy$DynamicAdvisedInterceptor.intercept(CglibAopProxy.java:708)
+	at com.liuche.schedule.service.impl.TaskServiceImpl$$EnhancerBySpringCGLIB$$c0bf9f90.addTask(<generated>)
+	at com.liuche.shedule.TaskServiceTest.testPoll(TaskServiceTest.java:57)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:62)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:498)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:59)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:56)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestExecutionCallbacks.evaluate(RunBeforeTestExecutionCallbacks.java:74)
+	at org.springframework.test.context.junit4.statements.RunAfterTestExecutionCallbacks.evaluate(RunAfterTestExecutionCallbacks.java:84)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestMethodCallbacks.evaluate(RunBeforeTestMethodCallbacks.java:75)
+	at org.springframework.test.context.junit4.statements.RunAfterTestMethodCallbacks.evaluate(RunAfterTestMethodCallbacks.java:86)
+	at org.springframework.test.context.junit4.statements.SpringRepeat.evaluate(SpringRepeat.java:84)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:366)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:251)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.runChild(SpringJUnit4ClassRunner.java:97)
+	at org.junit.runners.ParentRunner$4.run(ParentRunner.java:331)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:79)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:329)
+	at org.junit.runners.ParentRunner.access$100(ParentRunner.java:66)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:293)
+	at org.springframework.test.context.junit4.statements.RunBeforeTestClassCallbacks.evaluate(RunBeforeTestClassCallbacks.java:61)
+	at org.springframework.test.context.junit4.statements.RunAfterTestClassCallbacks.evaluate(RunAfterTestClassCallbacks.java:70)
+	at org.junit.runners.ParentRunner$3.evaluate(ParentRunner.java:306)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:413)
+	at org.springframework.test.context.junit4.SpringJUnit4ClassRunner.run(SpringJUnit4ClassRunner.java:190)
+	at org.junit.runner.JUnitCore.run(JUnitCore.java:137)
+	at com.intellij.junit4.JUnit4IdeaTestRunner.startRunnerWithArgs(JUnit4IdeaTestRunner.java:69)
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater$1.execute(IdeaTestRunner.java:38)
+	at com.intellij.rt.execution.junit.TestsRepeater.repeat(TestsRepeater.java:11)
+	at com.intellij.rt.junit.IdeaTestRunner$Repeater.startRunnerWithArgs(IdeaTestRunner.java:35)
+	at com.intellij.rt.junit.JUnitStarter.prepareStreamsAndStart(JUnitStarter.java:235)
+	at com.intellij.rt.junit.JUnitStarter.main(JUnitStarter.java:54)
+Caused by: java.util.concurrent.ExecutionException: com.liuche.common.exception.ScheduleSystemException: 
+### Error updating database.  Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+### The error may exist in com/liuche/schedule/mapper/TaskInfoMapper.java (best guess)
+### The error may involve com.liuche.schedule.mapper.TaskInfoMapper.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO taskinfo  ( task_id, execute_time, priority, task_type, parameters )  VALUES  ( ?, ?, ?, ?, ? )
+### Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+; Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.; nested exception is com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+	at java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.util.concurrent.FutureTask.get(FutureTask.java:192)
+	at com.liuche.schedule.service.impl.TaskServiceImpl.addTask(TaskServiceImpl.java:151)
+	... 46 common frames omitted
+Caused by: com.liuche.common.exception.ScheduleSystemException: 
+### Error updating database.  Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+### The error may exist in com/liuche/schedule/mapper/TaskInfoMapper.java (best guess)
+### The error may involve com.liuche.schedule.mapper.TaskInfoMapper.insert-Inline
+### The error occurred while setting parameters
+### SQL: INSERT INTO taskinfo  ( task_id, execute_time, priority, task_type, parameters )  VALUES  ( ?, ?, ?, ?, ? )
+### Cause: com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+; Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.; nested exception is com.mysql.cj.jdbc.exceptions.CommunicationsException: Communications link failure
+
+The last packet successfully received from the server was 4 milliseconds ago. The last packet sent successfully to the server was 66 milliseconds ago.
+	at com.liuche.schedule.service.impl.TaskServiceImpl.saveTaskInDB(TaskServiceImpl.java:196)
+	at com.liuche.schedule.service.impl.TaskServiceImpl.lambda$addTask$0(TaskServiceImpl.java:143)
+	at java.util.concurrent.FutureTask.run(FutureTask.java:266)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1149)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:624)
+	at java.lang.Thread.run(Thread.java:750)

@@ -1,0 +1,3 @@
+2023-04-05 00:58:10.979 [MyVisibleThread-1] INFO  thread.run:87 - 当前线程名称MyVisibleThread-1,计数器的值1,当前分组数据恢复的时间405
+2023-04-05 00:58:11.007 [MyVisibleThread-2] INFO  thread.run:87 - 当前线程名称MyVisibleThread-2,计数器的值0,当前分组数据恢复的时间433
+2023-04-05 00:58:11.007 [main] INFO  thread.syncData:96 - 数据恢复完成，耗时433

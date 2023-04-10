@@ -1,0 +1,5 @@
+2023-04-04 21:35:11.160 [main] INFO  thread.syncData:96 - 数据恢复完成，耗时0
+2023-04-04 21:36:47.552 [MyVisibleThread-2] INFO  thread.run:87 - 当前线程名称MyVisibleThread-2,计数器的值1,当前分组数据恢复的时间3999
+2023-04-04 21:36:47.616 [MyVisibleThread-1] INFO  thread.run:87 - 当前线程名称MyVisibleThread-1,计数器的值0,当前分组数据恢复的时间4063
+2023-04-04 21:36:47.616 [main] INFO  thread.syncData:96 - 数据恢复完成，耗时4063
+2023-04-04 21:37:52.927 [main] WARN  thread.addTask:156 - addTask was in mistake!
