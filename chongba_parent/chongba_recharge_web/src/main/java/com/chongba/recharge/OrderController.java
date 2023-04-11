@@ -70,6 +70,7 @@ public class OrderController {
 	@RequestMapping(value = "/payorder")
 	public ModelAndView payorder(String orderNo) {
 		OrderTrade orderTrade = null;
+		System.out.println("hello");
 		try {
 			//根据订单号查询待支付订单
 			orderTrade = orderProcessService.queryOrderByNo(orderNo);

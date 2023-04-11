@@ -22,3 +22,8 @@ rocketmq:
   name-server: 192.168.253.3:9876
   producer:
     group: chongba-group
+supplier:
+  apis: {
+    "jisuapi": "http://127.0.0.1:8090/jisuapi/mobilerecharge/recharge",
+    "juheapi": "http://127.0.0.1:8090/juheapi/recharge"
+        }
