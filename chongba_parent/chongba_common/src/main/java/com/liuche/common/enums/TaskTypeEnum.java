@@ -14,13 +14,13 @@ public enum TaskTypeEnum {
 	REMOTEERROR(StatusCode.REMOTEERROR, 1001, 3,"远程调用失败，重试"),
 	STATECHECK(StatusCode.STATECHECK, 1001, 4,"检查订单状态");
 
-	private int errorCode; //错误码
+	private final int errorCode; //错误码
 
-	private int taskType; //对应具体业务
+	private final int taskType; //对应具体业务
 
-	private int priority;  //业务不同级别
+	private final int priority;  //业务不同级别
 
-	private String desc;   //描述信息
+	private final String desc;   //描述信息
 
 	TaskTypeEnum(int errorCode, int taskType, int priority, String desc) {
 		this.errorCode=errorCode;

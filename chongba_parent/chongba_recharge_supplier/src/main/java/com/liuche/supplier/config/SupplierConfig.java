@@ -11,4 +11,5 @@ import java.util.Map;
 @ConfigurationProperties(prefix = "supplier")
 public class SupplierConfig {
     private Map<String,String> apis;
+    private int maxrepeat; // 最大重试次数
 }
