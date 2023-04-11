@@ -20,20 +20,20 @@ import java.util.List;
 @Slf4j
 public class OrderController {
 
-	
+
 	@Autowired
 	private OrderProcessService orderProcessService;
-	
+
 	@Autowired
 	private RocketMQTemplate rocketMQTemplate;
-	
-	
+
+
 	@RequestMapping(value = "/")
 	public ModelAndView index() {
 		ModelAndView view =new ModelAndView("index");
 		return view;
 	}
-	
+
 	/**
 	 * 充值操作（充值订单）
 	 *            订单请求信息
@@ -41,6 +41,7 @@ public class OrderController {
 	 */
 	@RequestMapping(value = "/crtorder")
 	public ModelAndView createRechargeOrder(RechargeRequest orRequest) {
+		System.out.println("nihao a ");
 		Result<com.chongba.recharge.RechargeResponse> result = null;
 		ModelAndView view;
 		try {
@@ -52,15 +53,15 @@ public class OrderController {
 		}
 		if(result.getCode()==200) {
 			//成功
-		   view =new ModelAndView("pay");
-		   view.addObject("result",result);
+			view =new ModelAndView("pay");
+			view.addObject("result",result);
 		}else {
 			//失败
-		   view =new ModelAndView("recharge");
+			view =new ModelAndView("recharge");
 		}
 		return view;
 	}
-	
+
 
 	/**
 	 * 选择订单支付方式
@@ -71,16 +72,16 @@ public class OrderController {
 		OrderTrade orderTrade = null;
 		try {
 			//根据订单号查询待支付订单
-	       orderTrade = orderProcessService.queryOrderByNo(orderNo);
-	       // 调用支付服务完成支付,接收支付结果
+			orderTrade = orderProcessService.queryOrderByNo(orderNo);
+			// 调用支付服务完成支付,接收支付结果
 
 			//支付后通知供应商对接模块----异步通知
-		   RechargeRequest request =new RechargeRequest();
-		   request.setOrderNo(orderNo);
-		   request.setMobile(orderTrade.getMobile());
-		   request.setPamt(orderTrade.getSalesPrice());
-		   
-		   rocketMQTemplate.convertAndSend("pay", request);
+			RechargeRequest request =new RechargeRequest();
+			request.setOrderNo(orderNo);
+			request.setMobile(orderTrade.getMobile());
+			request.setPamt(orderTrade.getSalesPrice());
+
+			rocketMQTemplate.convertAndSend("pay", request);
 		} catch (Exception e) {
 			ModelAndView view =new ModelAndView("payfail");
 			return view;
@@ -89,7 +90,7 @@ public class OrderController {
 		view.addObject("orderTrade", orderTrade);
 		return view;
 	}
-	
+
 	@RequestMapping(value = "/orderList")
 	public ModelAndView orderList(String userId) {
 		List<OrderTrade> orderList = null;
@@ -103,7 +104,7 @@ public class OrderController {
 		//view.addObject("pamt",pay);
 		return view;
 	}
-	
+
 	@RequestMapping(value = "/remove")
 	public String remove(String orderNo) {
 		orderProcessService.removeOrderTrade(orderNo);

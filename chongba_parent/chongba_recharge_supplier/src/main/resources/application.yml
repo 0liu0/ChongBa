@@ -1,0 +1,24 @@
+server:
+  port: 99
+spring:
+  application:
+    name: supplier
+  # 连接mysql
+  datasource:
+    url: jdbc:mysql://localhost:3306/chongba
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: liuche
+  redis:
+    host: 192.168.253.3
+    password: liuche
+    database: 1
+    port: 6379
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+rocketmq:
+  name-server: 192.168.253.3:9876
+  producer:
+    group: chongba-group
