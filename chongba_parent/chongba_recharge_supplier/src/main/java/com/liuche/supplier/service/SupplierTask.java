@@ -5,4 +5,5 @@ import com.liuche.common.recharge.RechargeRequest;
 public interface SupplierTask {
     void addRetryTask(RechargeRequest rechargeRequest);
     void retryRecharge();
+    void retryBalance();
 }

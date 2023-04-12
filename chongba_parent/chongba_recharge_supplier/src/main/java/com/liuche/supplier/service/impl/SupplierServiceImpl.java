@@ -14,6 +14,7 @@ import com.liuche.common.recharge.RechargeRequest;
 import com.liuche.supplier.config.SupplierConfig;
 import com.liuche.supplier.service.SupplierService;
 import com.liuche.supplier.service.SupplierTask;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpEntity;
@@ -21,10 +22,12 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
 
+@Slf4j
 @Component
 public class SupplierServiceImpl implements SupplierService {
     @Autowired
@@ -41,15 +44,25 @@ public class SupplierServiceImpl implements SupplierService {
         if (rechargeRequest.getRepeat() >= supplierConfig.getMaxrepeat()) {
             // 结束重试 --------修改订单为失败
             updateTrade(rechargeRequest.getOrderNo(), OrderStatusEnum.FAIL.getCode());
-            System.out.println("我要退出了哦");
             return;
         }
         // 进行远程供应商的接口的调用，由于有多个供应商，所以需要判断
         Result<RechargeResponse> result = doDispatchSupplier(rechargeRequest);
+        // 根据供应商返回的错误信息判断应该添加哪种类型的ErrorCode
         if (result!=null) {
-            // 添加重试任务
-            rechargeRequest.setErrorCode(StatusCode.ORDER_REQ_FAILED);
-            supplierTask.addRetryTask(rechargeRequest);
+            if (result.getCode()==StatusCode.ORDER_REQ_FAILED) {
+                // 添加重试任务
+                rechargeRequest.setErrorCode(StatusCode.ORDER_REQ_FAILED);
+                supplierTask.addRetryTask(rechargeRequest);
+            } else if (result.getCode()==StatusCode.BALANCE_NOT_ENOUGH) {
+                // 添加轮询任务
+                rechargeRequest.setErrorCode(StatusCode.BALANCE_NOT_ENOUGH);
+                // 重置重复次数
+                rechargeRequest.setRepeat(0);
+                // 修改供应商（暂时用这种方法，实际开发中不可能只有一个供应商）
+                rechargeRequest.setSupply(Constants.jisuapi);
+                supplierTask.addRetryTask(rechargeRequest);
+            }
         }
     }
 
@@ -70,7 +83,25 @@ public class SupplierServiceImpl implements SupplierService {
     }
 
     private Result<RechargeResponse> doPostJisu(RechargeRequest rechargeRequest) {
-        return null;
+        log.info("doPostJisu,{}",rechargeRequest);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        //设置表单参数
+        MultiValueMap<String, String> map= new LinkedMultiValueMap<String, String>();
+        map.add("mobile",rechargeRequest.getMobile());
+        map.add("amount",rechargeRequest.getPamt()+"");
+        map.add("outorderNo", rechargeRequest.getOrderNo());
+        map.add("repeat", ""+rechargeRequest.getRepeat());
+        //模拟请求失败
+        map.add("req_status", ""+StatusCode.ERROR);
+        HttpEntity<MultiValueMap<String, String>> requestEntity = new
+                HttpEntity<MultiValueMap<String, String>>(map, headers);
+        ResponseEntity<String> responseEntity =
+                restTemplate.postForEntity(rechargeRequest.getRechargeUrl(), requestEntity , String.class);
+        //转换成统一对象
+        Result<RechargeResponse> result= JSON.parseObject(responseEntity.getBody(), new
+                TypeReference<Result<RechargeResponse>>(){});
+        return result;
     }
 
     private Result<RechargeResponse> doPostJuhe(RechargeRequest rechargeRequest) {

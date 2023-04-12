@@ -49,9 +49,23 @@ public class SupplierTaskImpl implements SupplierTask {
 
     @Override
     @Scheduled(fixedRate = 1000)
+    // 订单下单错误而重试
     public void retryRecharge() {
         // 得到枚举对象
         TaskTypeEnum taskTypeEnum = TaskTypeEnum.ORDER_REQ_FAILED;
+        retry(taskTypeEnum);
+    }
+    @Override
+    @Scheduled(fixedRate = 1000)
+    // 余额不足而重试
+    public void retryBalance() {
+        // 得到枚举对象
+        TaskTypeEnum taskTypeEnum = TaskTypeEnum.BALANCE_NOT_ENOUGH;
+        retry(taskTypeEnum);
+    }
+
+    // 根据不同任务类型来进行retry
+    private void retry(TaskTypeEnum taskTypeEnum) {
         ResponseMessage responseMessage = taskFeign.pollTask(taskTypeEnum.getPriority(), taskTypeEnum.getTaskType());
         if (responseMessage.isFlag()) {
             // 得到消费任务
